@@ -26,7 +26,9 @@ namespace Ordering.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<OrderResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetOrdersByUsername(string username)
         {
-            throw new NotImplementedException();
+            var orders = await _orderRepository.GetOrdersByUsername(username);
+            if (orders != null) return Ok(_mapper.Map<IEnumerable<OrderResponse>>(orders));
+            return NotFound();
         }
     }
 }
