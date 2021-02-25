@@ -17,3 +17,9 @@ services:
         build:
             context: .
             dockerfile: src/Basket/Basket.API/Dockerfile
+    shoppingweb:
+        image: ${DOCKER_REGISTRY-}shoppingweb
+        build:
+            context: .
+            dockerfile: src/ShoppingWeb/Dockerfile
+
