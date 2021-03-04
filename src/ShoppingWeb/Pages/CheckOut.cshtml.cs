@@ -1,49 +1,32 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AspnetRunBasics.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ShoppingWeb.ApiContainer;
+using ShoppingWeb.Models;
 
 namespace AspnetRunBasics
 {
     public class CheckOutModel : PageModel
     {
-        private readonly ICartRepository _cartRepository;
-        private readonly IOrderRepository _orderRepository;
+        private readonly IBasketApi _basketApi;
+        private readonly IOrderApi _orderApi;
 
-        public CheckOutModel(ICartRepository cartRepository, IOrderRepository orderRepository)
+        public CheckOutModel(IBasketApi basketApi, IOrderApi orderApi)
         {
-            _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
-            _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+            _basketApi = basketApi;
+            _orderApi = orderApi;
         }
 
         [BindProperty]
-        public Entities.Order Order { get; set; }
+        public BasketCheckoutResponse Order { get; set; }
 
-        public Entities.Cart Cart { get; set; } = new Entities.Cart();
+        public BasketCartResponse Cart { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Cart = await _cartRepository.GetCartByUserName("test");
+            var response = await _basketApi.Checkout(Order);
             return Page();
         }
-
-        public async Task<IActionResult> OnPostCheckOutAsync()
-        {
-            Cart = await _cartRepository.GetCartByUserName("test");
-
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            Order.UserName = "test";
-            Order.TotalPrice = Cart.TotalPrice;
-
-            await _orderRepository.CheckOut(Order);
-            await _cartRepository.ClearCart("test");
-            
-            return RedirectToPage("Confirmation", "OrderSubmitted");
-        }       
     }
 }
