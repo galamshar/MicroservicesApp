@@ -24,7 +24,7 @@ namespace ShoppingWeb.ApiContainer.Implementations
         {
             var basketContent = new StringContent(JsonConvert.SerializeObject(basketCheckout), System.Text.Encoding.UTF8, "application/json");
             var message = new HttpRequestBuilder(_settings.BaseAddress)
-                .SetPath(_settings.BasketPath)
+                .SetPath($"{_settings.BasketPath}/Checkout")
                 .Content(basketContent)
                 .HttpMethod(HttpMethod.Post)
                 .GetHttpMessage();

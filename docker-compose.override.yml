@@ -1,57 +1,100 @@
-version: '3.4'
+version: "3.9"
+
+volumes:
+  catalog.db.volume:
+  ordering.db.volume:
+  ordering.db.lib.volume:
+  ordering.db.log.volume:
 
 services:
-    catalogdb:
-        container_name: catalogdb
-        restart: always
-        volumes:
-            - ${WEBAPP_STORAGE_HOME}/site:/data/db
-        ports:
-            - "27017:27017"
-    basketdb:
-        container_name: basketdb
-        restart: always
-        volumes:
-            - ${WEBAPP_STORAGE_HOME}/site:/data/db
-        ports:
-            - "6379:6379"
-    rabbitmq:
-        container_name: rabbitmq
-        restart: always
-        ports:
-            - "5672:5672"
-            - "15672:15672"
-    catalog.api:
-        environment:
-            - ASPNETCORE_ENVIRONMENT=Development
-            - "CatalogDatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
-        depends_on:
-            - catalogdb
-        volumes:
-            - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
-            - ${HOME}/.aspnet/https:/root/.aspnet/https/
-        ports:
-            - "8000:80"
-    basket.api:
-        environment:
-            - ASPNETCORE_ENVIRONMENT=Development
-            - "ConnectionStrings:Redis=basketdb:6379"
-            - "EventBus:HostName=rabbitmq"
-        depends_on:
-            - basketdb
-            - rabbitmq
-        volumes:
-            - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
-            - ${HOME}/.aspnet/https:/root/.aspnet/https/
-        ports:
-            - "8001:80"
-  shoppingweb:
+  rabbitmq:
+    hostname: rabbitmq
+    restart: always
+    container_name: rabbitmq
+    volumes:
+      - ordering.db.volume:/etc/rabbitmq
+      - ordering.db.lib.volume:/var/lib/rabbitmq 
+      - ordering.db.log.volume:/var/log/rabbitmq
+    ports:
+      - 5672:5672 
+      - 15672:15672
+
+  orderdb:
+    container_name: orderdb
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=0000
+    ports:
+      - 5432:5432 
+
+  ordering.api:
+    container_name: ordering.api
+    depends_on:
+      - rabbitmq
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_URLS=http://+:80
     ports:
-      - "80"
-      - "443"
+      - 5004:80
+      - 5005:443
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${USERPROFILE}/.aspnet/https:/https/
+
+  basketdb:
+    container_name: basketdb
+    restart: always
+    depends_on:
+      - rabbitmq
+    ports:
+      - 6379:6379 
+  basket.api:
+    container_name: basket.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - 5002:80
+      - 5003:443
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${USERPROFILE}/.aspnet/https:/https/
+
+  catalogdb:
+    container_name: catalogdb
+    restart: always
+    volumes:
+    - catalog.db.volume:/data/db
+    ports:
+      - 27017:27017
+
+  catalog.api:
+    container_name: catalog.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - 5000:80
+      - 5001:443
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${USERPROFILE}/.aspnet/https:/https/
+  apigateway:
+    container_name: apigateway
+    ports:
+      -  7000:80
+      -  7001:443
+  shoppingweb:
+    container_name: webapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - 4000:80
+      - 4001:443
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

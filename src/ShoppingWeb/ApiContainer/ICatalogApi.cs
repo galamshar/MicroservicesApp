@@ -11,6 +11,6 @@ namespace ShoppingWeb.ApiContainer
         Task<IEnumerable<ProductResponse>> GetProducts();
         Task<ProductResponse> GetProduct(string id);
         Task<IEnumerable<ProductResponse>> GetProductsByCategory(string category);
-
+        Task<IEnumerable<string>> GetCategories();
     }
 }

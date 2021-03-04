@@ -6,7 +6,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalogapi",
+          "Host": "catalog.api",
           "Port": 80
         }
       ],
@@ -18,7 +18,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalogapi",
+          "Host": "catalog.api",
           "Port": 80
         }
       ],
@@ -30,32 +30,44 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalogapi",
+          "Host": "catalog.api",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/Catalog/GetProductByCategory/{category}",
       "UpstreamHttpMethod": [ "Get" ]
     },
-    //Basket API
     {
-      "DownstreamPathTemplate": "/api/v1/Basket",
+      "DownstreamPathTemplate": "/api/v1/Catalog/GetCategories",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "basketapi",
+          "Host": "catalog.api",
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/Basket",
-      "UpstreamHttpMethod": [ "Get", "Post" ]
+      "UpstreamPathTemplate": "/Catalog/GetCategories",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    //Basket API
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "basket.api",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/Basket",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "UpstreamPathTemplate": "/Basket"
     },
     {
       "DownstreamPathTemplate": "/api/v1/Basket/{username}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "basketapi",
+          "Host": "basket.api",
           "Port": 80
         }
       ],
@@ -67,7 +79,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "basketapi",
+          "Host": "basket.api",
           "Port": 80
         }
       ],
@@ -80,7 +92,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "orderingapi",
+          "Host": "ordering.api",
           "Port": 80
         }
       ],

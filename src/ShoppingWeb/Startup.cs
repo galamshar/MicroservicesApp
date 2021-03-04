@@ -35,6 +35,7 @@ namespace ShoppingWeb
 
             services.AddTransient<IOrderApi, OrderApi>();
             services.AddTransient<IBasketApi, BasketApi>();
+            services.AddTransient<ICatalogApi, CatalogApi>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

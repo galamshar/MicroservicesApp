@@ -80,5 +80,11 @@ namespace Catalog.API.Repositories
             return deleteResult.IsAcknowledged
                 && deleteResult.DeletedCount > 0;
         }
+
+        public List<string> GetCategories()
+        {
+            var categories = _context.Products.AsQueryable().Select(e => e.Category).Distinct().ToList();
+            return categories;
+        }
     }
 }

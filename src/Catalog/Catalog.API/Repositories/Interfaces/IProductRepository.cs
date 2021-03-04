@@ -16,5 +16,6 @@ namespace Catalog.API.Repositories.Interfaces
         Task Create(Product product);
         Task<bool> Update(Product product);
         Task<bool> Delete(string id);
+        List<string> GetCategories();
     }
 }

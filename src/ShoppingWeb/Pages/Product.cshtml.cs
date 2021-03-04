@@ -20,20 +20,20 @@ namespace AspnetRunBasics
             _basketApi = basketApi;
         }
 
-        //public IEnumerable<Entities.Category> CategoryList { get; set; } = new List<Entities.Category>();
+        public IEnumerable<string> CategoryList { get; set; } = new List<string>();
         public IEnumerable<ProductResponse> ProductList { get; set; } = new List<ProductResponse>();
 
 
         [BindProperty(SupportsGet = true)]
         public string SelectedCategory { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? categoryId)
+        public async Task<IActionResult> OnGetAsync(string categoryName)
         {
 
-            if (categoryId.HasValue)
+            if (categoryName.Length > 0)
             {
-                ProductList = await _catalogApi.GetProductsByCategory(categoryId.Value.ToString());
-                //SelectedCategory = CategoryList.FirstOrDefault(c => c.Id == categoryId.Value)?.Name;
+                ProductList = await _catalogApi.GetProductsByCategory(categoryName);
+                SelectedCategory = CategoryList.FirstOrDefault(c => c == categoryName);
             }
             else
             {

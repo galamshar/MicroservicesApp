@@ -79,5 +79,12 @@ namespace Catalog.API.Controllers
         {
             return Ok(await _repository.Delete(id));
         }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public ActionResult<IEnumerable<string>> GetCategories()
+        {
+            return Ok(_repository.GetCategories());
+        }
     }
 }

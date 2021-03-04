@@ -53,9 +53,9 @@ namespace Ordering.API
             {
                 var factory = new ConnectionFactory
                 {
-                    HostName = Configuration["EventBus:HostName"]
+                    HostName = Configuration["EventBus:Host"]
                 };
-                factory.UserName = Configuration["EventBus:Username"];
+                factory.UserName = Configuration["EventBus:UserName"];
                 factory.Password = Configuration["EventBus:Password"];
 
                 return new RabbitMQConnection(factory);
