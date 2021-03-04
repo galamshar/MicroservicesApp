@@ -1,23 +1,23 @@
-﻿using System;
-using System.Threading.Tasks;
-using AspnetRunBasics.Repositories;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ShoppingWeb.ApiContainer;
+using ShoppingWeb.Models;
 
 namespace AspnetRunBasics
 {
     public class ProductDetailModel : PageModel
     {
-        private readonly IProductRepository _productRepository;
-        private readonly ICartRepository _cartRepository;
+        private ICatalogApi _catalogApi;
+        private IBasketApi _basketApi;
 
-        public ProductDetailModel(IProductRepository productRepository, ICartRepository cartRepository)
+        public ProductDetailModel(ICatalogApi catalogApi, IBasketApi basketApi)
         {
-            _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
-            _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
+            _catalogApi = catalogApi;
+            _basketApi = basketApi;
         }
 
-        public Entities.Product Product { get; set; }
+        public ProductResponse Product { get; set; }
 
         [BindProperty]
         public string Color { get; set; }
@@ -32,7 +32,7 @@ namespace AspnetRunBasics
                 return NotFound();
             }
 
-            Product = await _productRepository.GetProductById(productId.Value);
+            Product = await _catalogApi.GetProduct(productId.Value.ToString());
             if (Product == null)
             {
                 return NotFound();
@@ -45,7 +45,7 @@ namespace AspnetRunBasics
             //if (!User.Identity.IsAuthenticated)
             //    return RedirectToPage("./Account/Login", new { area = "Identity" });
 
-            await _cartRepository.AddItem("test", productId, Quantity, Color);
+            //await _cartRepository.AddItem("test", productId, Quantity, Color);
             return RedirectToPage("Cart");
         }
     }

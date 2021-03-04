@@ -3,25 +3,27 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ShoppingWeb.ApiContainer;
+using ShoppingWeb.Models;
 
 namespace AspnetRunBasics.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly IProductRepository _productRepository;
-        private readonly ICartRepository _cartRepository;
+        private ICatalogApi _catalogApi;
+        private IBasketApi _basketApi;
 
-        public IndexModel(IProductRepository productRepository, ICartRepository cartRepository)
+        public IndexModel(ICatalogApi catalogApi, IBasketApi basketApi)
         {
-            _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
-            _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
+            _catalogApi = catalogApi;
+            _basketApi = basketApi;
         }
 
-        public IEnumerable<Entities.Product> ProductList { get; set; } = new List<Entities.Product>();
+        public IEnumerable<ProductResponse> ProductList { get; set; } = new List<ProductResponse>();
 
         public async Task<IActionResult> OnGetAsync()
         {
-            ProductList = await _productRepository.GetProducts();
+            ProductList = await _catalogApi.GetProducts();
             return Page();
         }
 
@@ -30,7 +32,7 @@ namespace AspnetRunBasics.Pages
             //if (!User.Identity.IsAuthenticated)
             //    return RedirectToPage("./Account/Login", new { area = "Identity" });
 
-            await _cartRepository.AddItem("test", productId);
+            //await _cartRepository.AddItem("test", productId);
             return RedirectToPage("Cart");
         }
     }
